@@ -15,7 +15,7 @@ mw_width, mw_height = 750, 580
 mw.minsize(mw_width,mw_height)
 mw.resizable(False, False)
 mw.geometry('+400+150')
-mw.iconbitmap('search1.ico')
+mw.iconbitmap('icon.ico')
 #====================================== Variables
 include_current_dir = BooleanVar()
 include_current_dir.set(True)
