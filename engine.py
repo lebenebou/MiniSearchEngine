@@ -4,34 +4,27 @@ import os
 CURRENT_DIR = os.path.dirname(__file__)
 os.chdir(CURRENT_DIR)
 
-def item_results(_dir: str, query: str):
+def item_results(_dir: str, query: str) -> dict[str, list[str]]:
 
-    return [item for item in os.listdir(_dir)
+    query = query.lower() # use lower case query to broaden matching
 
-        if item.lower().startswith(query.lower())
-        and
-        (os.path.isfile(item) or os.path.isdir(item))
-    ]
-    # returns items that start with the query string and are either a file or folder
+    result = {
+        "files":[],
+        "dirs":[]
+    }
 
-def file_results(items: list[str]):
+    for root, dirs, files in os.walk(_dir): # walks through folders and subfolders
 
-    return [item for item in items
+        if(os.path.basename(root).startswith('.')): continue
+        # ignore hidden folders
 
-        if os.path.isfile(item)
-    ]
-    # returns files results only
+        result["dirs"] += [item for item in dirs if os.path.basename(item).lower().startswith(query)]
+        result["files"] += [item for item in files if os.path.basename(item).lower().startswith(query)]
 
-def directory_results(items: list[str]):
-
-    return [item for item in items
-
-        if os.path.isdir(item)
-    ]
-    # returns directory results only
-
+    return result
+    # returns dictionary of files and folders which names start with the query
 
 
 if __name__=="__main__":
 
-    print(directory_results(item_results(CURRENT_DIR, ".")))
+    print(item_results(CURRENT_DIR, "head")["files"])
