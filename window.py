@@ -39,7 +39,38 @@ def reset_window():
 
 def start_search():
 
-    pass
+    query: str = keyword_entry.get().strip().lower()
+    if(query == ""):
+        messagebox.showerror("Unable To Seach", "Please input a keyword")
+        return
+    if(not query.isalnum()):
+        messagebox.showerror("Unable To Seach", "Please input an alphanumeric keyword")
+        return
+
+    dir_candidates = list(set([dir_entry1.get(), dir_entry2.get(), dir_entry3.get()]))
+    # get list of directories from entries and remove duplicates
+    dir_candidates = [d.strip().lower() for d in dir_candidates if d!=""]
+    # strip, lower, and remove empty inputs
+    if include_current_dir.get(): dir_candidates.append(engine.CURRENT_DIR.strip().lower())
+
+    if len(dir_candidates) == 0:
+        messagebox.showerror("Unable To Search", "No directories were chosen for your search")
+        return
+
+    valid_dirs = [d for d in dir_candidates if engine.os.path.isdir(d)]
+    if len(valid_dirs)==0: 
+        messagebox.showerror("Unable to search", "None of the directories you chose are valid")
+        return
+
+    if len(valid_dirs)<len(dir_candidates):
+        messagebox.showinfo("Invalid Directories", f"{len(dir_candidates)-len(valid_dirs)} out of {len(dir_candidates)} inputed directories are invalid, the search will not include results from those directories.")
+
+    
+
+    
+
+
+    
 
 def quit_app():
 
@@ -69,6 +100,13 @@ def listbox_cmd(a, b):
         box.yview_moveto(a) # change view for all listboxes
 
     content_sb.set(a, b)
+
+# key bindings ==============================
+def enter(event):
+
+    if str(search_btn['state'])!='disabled':
+        start_search()
+
 # frames ====================================
 keywords_frame = LabelFrame(mw,text='Keyword - Files',width=200, height=180,font=1)
 keywords_frame.place(x=10, y=10)
@@ -95,11 +133,11 @@ txt_check.place(x=78,y=55)
 py_check = ttk.Checkbutton(keywords_frame, text='.py',variable=include_py_files)
 py_check.place(x=78,y=75)
 
-m_check = ttk.Checkbutton(keywords_frame, text='.cpp',variable=include_cpp_files)
-m_check.place(x=130,y=55)
+cpp_check = ttk.Checkbutton(keywords_frame, text='.cpp',variable=include_cpp_files)
+cpp_check.place(x=130,y=55)
 
-js_check = ttk.Checkbutton(keywords_frame, text='.java',variable=include_java_files)
-js_check.place(x=130,y=75)
+java_check = ttk.Checkbutton(keywords_frame, text='.java',variable=include_java_files)
+java_check.place(x=130,y=75)
 
 file_types_note = Label(keywords_frame,text='Content of checked files will be\nsearched. All other file types will\nbe searched for by name only.')
 file_types_note.place(x=8,y=100)
