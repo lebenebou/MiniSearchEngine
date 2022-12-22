@@ -68,7 +68,7 @@ def file_content_results(_dir: str, query: str) -> dict[str, tuple[int, list[int
         for file in files:
 
             tuple_result = word_occurences(file, query)
-            if(tuple_result[0] >= 1): continue # skip files with no occurences
+            if(tuple_result[0] < 1): continue # skip files with no occurences
 
             result[file] = tuple_result
 
