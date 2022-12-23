@@ -83,7 +83,6 @@ def start_search():
         name_results["dirs"] += item_results["dirs"] # concatenate directory results with directory results so far
         del item_results
 
-    print(name_results)
 
     extensions = []
     if include_txt_files.get(): extensions.append(".txt")
@@ -96,12 +95,23 @@ def start_search():
         show_results(name_results, {}) # only show name results
         return
 
-    print(engine.content_results(valid_dirs[0], query, extensions))
+    for _dir in valid_dirs:
+        # this merges two dictionaries together, overwriting values on duplicate keys
+        content_results.update(engine.content_results(_dir, query, extensions))
+        # but in this case the same key will never appear twice since a file path is unique
+
+    # should sort content_results here
+    #
+
+    show_results(name_results, content_results)
 
     
 def show_results(name_results: dict, content_results: dict):
 
-    pass
+    print(name_results)
+    print(content_results)
+
+
 
     
 
