@@ -4,6 +4,7 @@ from tkinter import ttk
 from tkinter import messagebox
 
 import engine # from "./engine.py"
+import os
 
 # main window initiation ====================
 mw = Tk()
@@ -13,7 +14,6 @@ mw.minsize(mw_width, mw_height)
 mw.geometry("+400+200")
 mw.resizable(False, False)
 mw.iconbitmap("./icon.ico")
-
 
 # variables =================================
 include_current_dir = BooleanVar()
@@ -31,7 +31,6 @@ include_cpp_files.set(False)
 include_java_files = BooleanVar()
 include_java_files.set(False)
 
-
 # functions =================================
 def reset_window():
 
@@ -46,10 +45,6 @@ def reset_window():
 
     keyword_entry.focus_set()
     keyword_entry.select_range(0, "end")
-
-    dir_entry1.delete(0, END)
-    dir_entry2.delete(0, END)
-    dir_entry3.delete(0, END)
 
 def start_search():
 
@@ -71,7 +66,7 @@ def start_search():
         messagebox.showerror("Unable To Search", "No directories were chosen for your search")
         return
 
-    valid_dirs = [d for d in dir_candidates if engine.os.path.isdir(d)]
+    valid_dirs = [d for d in dir_candidates if os.path.isdir(d)]
     if len(valid_dirs)==0: 
         messagebox.showerror("Unable to search", "None of the directories you chose are valid")
         return
@@ -112,9 +107,9 @@ def start_search():
         content_results.update(engine.content_results(_dir, query, extensions))
         # but in this case the same key will never appear twice since a file path is unique
 
-    show_results(name_results, sorted(content_results.items(), key=lambda item : item[0], reverse=False))
+    # show results, with content results sorted by number of matches
+    show_results(name_results, sorted(content_results.items(), key=lambda item : item[1][0], reverse=True))
 
-    
 def show_results(name_results: dict[str, list[str]], content_results: list[tuple]):
 
     if len(name_results["dirs"])==0:
@@ -140,7 +135,10 @@ def show_results(name_results: dict[str, list[str]], content_results: list[tuple
 
     search_btn["state"]="disabled" # disble search button after showing results
 
+def clicked_listbox_item(event):
 
+    for i in content_results_listbox.curselection():
+        print(content_results_listbox.get(i))
 
 def quit_app():
 
@@ -191,6 +189,7 @@ def escape(event):
 mw.bind("<Return>", enter)
 mw.bind("<Escape>", escape)
 
+print("Mini Search Engine: A Project By Youssef Yammine")
 # frames ====================================
 keywords_frame = LabelFrame(mw,text="Keyword - Files",width=200, height=180,font=1)
 keywords_frame.place(x=10, y=10)
@@ -285,6 +284,7 @@ content_results_label.place(x=4, y=155)
 
 content_results_listbox = Listbox(results_frame,width=58,height=7, yscrollcommand=listbox_cmd)
 content_results_listbox.place(x=5,y=178)
+content_results_listbox.bind("<ButtonPress-1>", clicked_listbox_item)
 
 matches_label = Label(results_frame, text="Matches")
 matches_label.place(x=364, y=155)
