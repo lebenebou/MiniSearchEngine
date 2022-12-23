@@ -52,13 +52,15 @@ def word_occurences(file_path: str, word: str) -> tuple[int, list[int]]:
 
     return (occ, line_results)
 
-def file_content_results(_dir: str, query: str) -> dict[str, tuple[int, list[int]]]:
+def content_results(_dir: str, query: str, extensions: list[str]) -> dict[str, tuple[int, list[int]]]:
 
     result = {} # dictionary with file names as keys, and tuples as values
     # tuple[0] is the number of occurences of the query
     # tuple[1] is a list of the lines of this occurences
 
     # for example, file_content_results(CURRENT_DIR, "example") returns {"engine.py": (1, [55])}
+    
+    if len(extensions)==0: return result # empty result if no extensions are chosen
 
     for root, dirs, files in os.walk(_dir): # walks through folders and subfolders
 
@@ -66,6 +68,12 @@ def file_content_results(_dir: str, query: str) -> dict[str, tuple[int, list[int
         # skip hidden folders
 
         for file in files:
+
+            skip = True
+            for ext in extensions:
+                if file.endswith(ext): skip = False; break;
+
+            if skip: continue
 
             tuple_result = word_occurences(file, query)
             if(tuple_result[0] < 1): continue # skip files with no matches
@@ -77,4 +85,4 @@ def file_content_results(_dir: str, query: str) -> dict[str, tuple[int, list[int
 
 if __name__=="__main__":
 
-    print(file_content_results(CURRENT_DIR, "example"))
+    print(content_results(CURRENT_DIR, "example", [".py"]))

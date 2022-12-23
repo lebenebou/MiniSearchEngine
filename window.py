@@ -35,7 +35,9 @@ include_java_files.set(False)
 # functions =================================
 def reset_window():
 
-    pass
+    keyword_entry.focus_set()
+    keyword_entry.select_range(0, "end")
+
 
 def start_search():
 
@@ -69,20 +71,36 @@ def start_search():
 
     # Search Starts
 
-    results = {}
-    for _dir in valid_dirs:
-        results.update(engine.item_results(_dir, query))
+    name_results = {
+        "files":[],
+        "dirs":[]
+    }
 
-    print(results)
+    for _dir in valid_dirs:
+
+        item_results = engine.item_results(_dir, query)
+        name_results["files"] += item_results["files"] # concatenate file results with file results so far
+        name_results["dirs"] += item_results["dirs"] # concatenate directory results with directory results so far
+        del item_results
+
+    print(name_results)
 
     
+    # show_results(name_results, content_results)
 
+    
+def show_results(name_results: dict, content_results: dict):
+
+    pass
 
     
 
 def quit_app():
 
-    pass
+    close_app = messagebox.askquestion("Exit","Are you sure you want to exit?")
+
+    if close_app=="yes":
+        mw.destroy()
 
 def shorten_dir_left(_dir: str):
     if(len(_dir) <= 50): return _dir
@@ -112,8 +130,21 @@ def listbox_cmd(a, b):
 # key bindings ==============================
 def enter(event):
 
-    if str(search_btn['state'])!='disabled':
-        start_search()
+    if str(search_btn['state'])=='disabled': return
+
+    start_search()
+
+def escape(event):
+
+    if str(search_btn['state'])=='disabled':
+        reset_window()
+        return
+
+    quit_app()
+
+mw.bind("<Return>", enter)
+mw.bind("<Escape>", escape)
+
 
 # frames ====================================
 keywords_frame = LabelFrame(mw,text='Keyword - Files',width=200, height=180,font=1)
