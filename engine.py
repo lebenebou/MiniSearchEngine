@@ -56,7 +56,7 @@ def content_results(_dir: str, query: str, extensions: list[str]) -> dict[str, t
 
     result = {} # dictionary with file names as keys, and tuples as values
     # tuple[0] is the number of occurences of the query
-    # tuple[1] is a list of the lines of this occurences
+    # tuple[1] is a list of the lines of these occurences
 
     # for example, file_content_results(CURRENT_DIR, "example") returns {"engine.py": (1, [55])}
     
@@ -78,10 +78,11 @@ def content_results(_dir: str, query: str, extensions: list[str]) -> dict[str, t
             if skip: continue
             # skip the file if it does not end with any of the given extensions
 
-            tuple_result = word_occurences(file, query)
+            file_path = os.path.join(root, file)
+            tuple_result = word_occurences(file_path, query)
             if(tuple_result[0] < 1): continue # skip files with 0 matches
 
-            result[file] = tuple_result
+            result[file_path] = tuple_result
 
     return result
 

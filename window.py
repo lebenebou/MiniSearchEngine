@@ -85,8 +85,18 @@ def start_search():
 
     print(name_results)
 
-    
-    # show_results(name_results, content_results)
+    extensions = []
+    if include_txt_files.get(): extensions.append(".txt")
+    if include_cpp_files.get(): extensions.append(".cpp")
+    if include_py_files.get(): extensions.append(".py")
+    if include_java_files.get(): extensions.append(".java")
+
+    content_results = {}
+    if len(extensions)==0: # no extensions were chosen
+        show_results(name_results, {}) # only show name results
+        return
+
+    print(engine.content_results(valid_dirs[0], query, extensions))
 
     
 def show_results(name_results: dict, content_results: dict):
