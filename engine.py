@@ -71,12 +71,15 @@ def content_results(_dir: str, query: str, extensions: list[str]) -> dict[str, t
 
             skip = True
             for ext in extensions:
-                if file.endswith(ext): skip = False; break;
+                if file.endswith(ext):
+                    skip = False
+                    break
 
             if skip: continue
+            # skip the file if it does not end with any of the given extensions
 
             tuple_result = word_occurences(file, query)
-            if(tuple_result[0] < 1): continue # skip files with no matches
+            if(tuple_result[0] < 1): continue # skip files with 0 matches
 
             result[file] = tuple_result
 
