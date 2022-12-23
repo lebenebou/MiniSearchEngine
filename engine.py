@@ -27,12 +27,13 @@ def item_results(_dir: str, query: str) -> dict[str, list[str]]:
 
     return result
 
-def word_occurences(file_path: str, word: str) -> tuple[int, list[int]]:
+def word_occurences(file_path: str, query: str) -> tuple[int, list[str], list[int]]:
 
-    # returns a tuple (number_of_occurences, [line_number, line_number, ...])
+    # returns a tuple (number_of_occurences, [words that matched], [line numbers])
 
     lines = [] # lines of given file
     occ = 0 # number of occurences of the word
+    match_results = [] # words that matched
     line_results = [] # line numbers on which the word occurs
 
     try:
@@ -45,18 +46,25 @@ def word_occurences(file_path: str, word: str) -> tuple[int, list[int]]:
 
     for i in range(len(lines)):
 
-        if word in lines[i]:
-            occ += 1
-            line_results.append(i+1) # line indexing starts at 0
-            continue
+        words = lines[i].split(" ") # list of words in the line
 
-    return (occ, line_results)
+        for word in words:
+
+            if not word.lower().startswith(query): continue
+            # skip word if it doesn't match
+
+            occ += 1
+            match_results.append(word)
+            line_results.append(i+1)
+
+    return (occ, match_results, line_results)
 
 def content_results(_dir: str, query: str, extensions: list[str]) -> dict[str, tuple[int, list[int]]]:
 
     result = {} # dictionary with file names as keys, and tuples as values
     # tuple[0] is the number of occurences of the query
-    # tuple[1] is a list of the lines of these occurences
+    # tuple[1] is the list of matches (strings)
+    # tuple[2] is a list of the lines of these occurences
 
     # for example, file_content_results(CURRENT_DIR, "example") returns {".../engine.py": (1, [55])}
     
