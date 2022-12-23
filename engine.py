@@ -22,8 +22,8 @@ def item_results(_dir: str, query: str) -> dict[str, list[str]]:
         if(os.path.basename(root).startswith('.')): continue
         # skip hidden folders
 
-        result["dirs"] += [item for item in dirs if os.path.basename(item).lower().startswith(query)]
-        result["files"] += [item for item in files if os.path.basename(item).lower().startswith(query)]
+        result["dirs"] += [os.path.join(root, item) for item in dirs if os.path.basename(item).lower().startswith(query)]
+        result["files"] += [os.path.join(root, item) for item in files if os.path.basename(item).lower().startswith(query)]
 
     return result
 

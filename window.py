@@ -17,7 +17,7 @@ mw.iconbitmap("./icon.ico")
 
 # variables =================================
 include_current_dir = BooleanVar()
-include_current_dir.set(False)
+include_current_dir.set(True)
 
 include_txt_files = BooleanVar()
 include_txt_files.set(False)
@@ -64,8 +64,16 @@ def start_search():
 
     if len(valid_dirs)<len(dir_candidates):
         messagebox.showinfo("Invalid Directories", f"{len(dir_candidates)-len(valid_dirs)} out of {len(dir_candidates)} inputed directories are invalid, the search will not include results from those directories.")
-
     
+    del dir_candidates # dereference candidates as they are no longer useful
+
+    # Search Starts
+
+    results = {}
+    for _dir in valid_dirs:
+        results.update(engine.item_results(_dir, query))
+
+    print(results)
 
     
 
