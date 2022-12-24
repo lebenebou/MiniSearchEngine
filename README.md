@@ -8,7 +8,7 @@ Mini search engine coded with Python that let's you search for folders, files, a
 
 - ```word_occurences(file_path, query)``` returns the number of occurences of words that matched the query inside the given file contents, a list of which the words that matched the query, and the line numbers on which the matches occured.
 
-- ```content_results(_dir, query, extensions)``` uses **word_occurences()** to return the full list of files that match the query and end with one of the given extensions.
+- ```content_results(_dir, query, extensions)``` uses **word_occurences()** to return the full list of files inside the given directory that match the query and end with one of the given extensions.
 
 ## window.py
 ### This file constitutes the frontend of the project.
