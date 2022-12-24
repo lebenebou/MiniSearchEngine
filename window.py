@@ -5,6 +5,7 @@ from tkinter import messagebox
 
 import engine # from "./engine.py"
 import os
+import subprocess
 
 # main window initiation ====================
 mw = Tk()
@@ -31,6 +32,7 @@ include_cpp_files.set(False)
 include_java_files = BooleanVar()
 include_java_files.set(False)
 
+valid_dirs = []
 # functions =================================
 def reset_window():
 
@@ -45,6 +47,7 @@ def reset_window():
 
     keyword_entry.focus_set()
     keyword_entry.select_range(0, "end")
+    valid_dirs = []
 
 def start_search():
 
@@ -66,6 +69,7 @@ def start_search():
         messagebox.showerror("Unable To Search", "No directories were chosen for your search")
         return
 
+    global valid_dirs
     valid_dirs = [d for d in dir_candidates if os.path.isdir(d)]
     if len(valid_dirs)==0: 
         messagebox.showerror("Unable to search", "None of the directories you chose are valid")
@@ -137,8 +141,21 @@ def show_results(name_results: dict[str, list[str]], content_results: list[tuple
 
 def clicked_listbox_item(event):
 
-    for i in content_results_listbox.curselection():
-        print(content_results_listbox.get(i))
+    index = -1
+    try:
+        index = content_results_listbox.curselection()[0]
+    except IndexError: # nothing is selected
+        return
+
+    file_path = content_results_listbox.get(index)
+    open_file(os.path.basename(file_path))
+
+def open_file(file_name: str):
+
+    for _dir in valid_dirs:
+
+        print(os.path.isfile(os.path.join(_dir, file_name)))
+        # subprocess.run(["notepad.exe", os.path.join(_dir, file_name)])
 
 def quit_app():
 
@@ -284,7 +301,7 @@ content_results_label.place(x=4, y=155)
 
 content_results_listbox = Listbox(results_frame,width=58,height=7, yscrollcommand=listbox_cmd)
 content_results_listbox.place(x=5,y=178)
-content_results_listbox.bind("<ButtonPress-1>", clicked_listbox_item)
+content_results_listbox.bind("<Double-Button>", clicked_listbox_item)
 
 matches_label = Label(results_frame, text="Matches")
 matches_label.place(x=364, y=155)
@@ -315,3 +332,4 @@ search_btn.place(x=mw_width-93,y=mw_height-35)
 
 reset_window()
 # =================================================================================================
+if __name__=="__main__": mw.mainloop()
