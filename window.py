@@ -241,6 +241,7 @@ def escape(event):
 mw.bind("<Return>", enter)
 mw.bind("<Escape>", escape)
 
+os.system("cls")
 print("Mini Search Engine: A Project By Youssef Yammine")
 # frames ====================================
 keywords_frame = LabelFrame(mw,text="Keyword - Files",width=200, height=180,font=1)
@@ -369,4 +370,3 @@ search_btn.place(x=mw_width-93,y=mw_height-35)
 
 reset_window()
 # =================================================================================================
-if __name__=="__main__": mw.mainloop()
