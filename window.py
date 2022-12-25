@@ -163,11 +163,19 @@ def folders_couble_click(event):
     broken_dir = folder_results_listbox.get(index)
     open_folder(broken_dir)
 
-def open_file(broken_dir: str):
+def files_double_click(event):
+
+    index = file_results_listbox.curselection()[0]
+
+    broken_dir = file_results_listbox.get(index)
+    open_file(broken_dir, False)
+
+def open_file(broken_dir: str, content: bool = True):
 
     sublime_path = "C:\Program Files\Sublime Text 3\sublime_text.exe"
 
-    for file_path in content_results:
+    files = content_results if content else name_results["files"]
+    for file_path in files:
 
         if file_path.strip().endswith(broken_dir[3:].strip()):
 
@@ -308,7 +316,6 @@ folder_results_listbox = Listbox(results_frame,width=58,height=7, yscrollcommand
 folder_results_listbox.place(x=5,y=30)
 folder_results_listbox.bind("<Double-Button>", folders_couble_click)
 
-
 folder_results_sb.config(command=folder_results_listbox.yview)
 
 file_results_label = Label(results_frame, text="File Names")
@@ -319,6 +326,7 @@ file_results_sb.place(x=440,y=10,relwidth=0.35)
 
 file_results_listbox = Listbox(results_frame,width=58,height=7, yscrollcommand=file_results_sb.set)
 file_results_listbox.place(x=365,y=30)
+file_results_listbox.bind("<Double-Button>", files_double_click)
 
 file_results_sb.config(command=file_results_listbox.yview)
 
