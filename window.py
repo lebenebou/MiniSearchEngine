@@ -32,7 +32,6 @@ include_cpp_files.set(False)
 include_java_files = BooleanVar()
 include_java_files.set(False)
 
-valid_dirs = []
 # functions =================================
 def reset_window():
 
@@ -47,7 +46,15 @@ def reset_window():
 
     keyword_entry.focus_set()
     keyword_entry.select_range(0, "end")
-    valid_dirs = []
+    
+    global name_results
+    name_results = {
+        "files":[],
+        "dirs":[]
+    }
+
+    global content_results
+    content_results = {}
 
 def start_search():
 
@@ -82,6 +89,7 @@ def start_search():
 
     # Search Starts
 
+    global name_results
     name_results = {
         "files":[],
         "dirs":[]
@@ -101,7 +109,9 @@ def start_search():
     if include_py_files.get(): extensions.append(".py")
     if include_java_files.get(): extensions.append(".java")
 
+    global content_results
     content_results = {}
+
     if len(extensions)==0: # no extensions were chosen
         show_results(name_results, {}) # only show name results
         return # end function
@@ -139,23 +149,40 @@ def show_results(name_results: dict[str, list[str]], content_results: list[tuple
 
     search_btn["state"]="disabled" # disble search button after showing results
 
-def clicked_listbox_item(event):
+def content_double_click(event):
 
-    index = -1
-    try:
-        index = content_results_listbox.curselection()[0]
-    except IndexError: # nothing is selected
-        return
+    index = content_results_listbox.curselection()[0]
 
-    file_path = content_results_listbox.get(index)
-    open_file(os.path.basename(file_path))
+    broken_dir = content_results_listbox.get(index)
+    open_file(broken_dir)
 
-def open_file(file_name: str):
+def folders_couble_click(event):
 
-    for _dir in valid_dirs:
+    index = folder_results_listbox.curselection()[0]
 
-        print(os.path.isfile(os.path.join(_dir, file_name)))
-        # subprocess.run(["notepad.exe", os.path.join(_dir, file_name)])
+    broken_dir = folder_results_listbox.get(index)
+    open_folder(broken_dir)
+
+def open_file(broken_dir: str):
+
+    sublime_path = "C:\Program Files\Sublime Text 3\sublime_text.exe"
+
+    for file_path in content_results:
+
+        if file_path.strip().endswith(broken_dir[3:].strip()):
+
+            try: # try to open with sublime text
+                subprocess.Popen([sublime_path, file_path])
+            except FileNotFoundError: # sublime text path couldn't be found
+                subprocess.Popen(["notepad.exe", file_path])
+
+            return
+
+def open_folder(broken_dir: str):
+
+    for folder_path in name_results["dirs"]:
+        if folder_path.strip().endswith(broken_dir[3:].strip()):
+            os.startfile(folder_path.strip())
 
 def quit_app():
 
@@ -279,6 +306,8 @@ folder_results_sb.place(x=88,y=10,relwidth=0.35)
 
 folder_results_listbox = Listbox(results_frame,width=58,height=7, yscrollcommand=folder_results_sb.set)
 folder_results_listbox.place(x=5,y=30)
+folder_results_listbox.bind("<Double-Button>", folders_couble_click)
+
 
 folder_results_sb.config(command=folder_results_listbox.yview)
 
@@ -301,7 +330,7 @@ content_results_label.place(x=4, y=155)
 
 content_results_listbox = Listbox(results_frame,width=58,height=7, yscrollcommand=listbox_cmd)
 content_results_listbox.place(x=5,y=178)
-content_results_listbox.bind("<Double-Button>", clicked_listbox_item)
+content_results_listbox.bind("<Double-Button>", content_double_click)
 
 matches_label = Label(results_frame, text="Matches")
 matches_label.place(x=364, y=155)
