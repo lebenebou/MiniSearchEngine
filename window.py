@@ -122,7 +122,8 @@ def start_search():
         # but in this case the same key will never appear twice since a file path is unique
 
     # show results, with content results sorted by number of matches
-    show_results(name_results, sorted(content_results.items(), key=lambda item : item[1][0], reverse=True))
+    content_results = sorted(content_results.items(), key=lambda item : item[1][0], reverse=True)
+    show_results(name_results, content_results)
 
 def show_results(name_results: dict[str, list[str]], content_results: list[tuple]):
 
@@ -152,10 +153,8 @@ def show_results(name_results: dict[str, list[str]], content_results: list[tuple
 def content_double_click(event):
 
     index = content_results_listbox.curselection()[0]
+    open_file(content_results[index][0])
     
-    file_path = list(content_results.keys())[index]
-    open_file(file_path)
-
 def folders_couble_click(event):
 
     index = folder_results_listbox.curselection()[0]
@@ -166,7 +165,6 @@ def folders_couble_click(event):
 def files_double_click(event):
 
     index = file_results_listbox.curselection()[0]
-    
     file_path = name_results["files"][index]
     open_file(file_path)
 
@@ -182,7 +180,6 @@ def open_file(file_path: str):
 def open_folder(folder_path: str):
 
     os.startfile(folder_path.strip())
-
 
 def quit_app():
 
