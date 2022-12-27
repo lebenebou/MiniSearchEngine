@@ -152,45 +152,37 @@ def show_results(name_results: dict[str, list[str]], content_results: list[tuple
 def content_double_click(event):
 
     index = content_results_listbox.curselection()[0]
-
-    broken_dir = content_results_listbox.get(index)
-    open_file(broken_dir)
+    
+    file_path = list(content_results.keys())[index]
+    open_file(file_path)
 
 def folders_couble_click(event):
 
     index = folder_results_listbox.curselection()[0]
 
-    broken_dir = folder_results_listbox.get(index)
-    open_folder(broken_dir)
+    folder_path = name_results["dirs"][index]
+    open_folder(folder_path)
 
 def files_double_click(event):
 
     index = file_results_listbox.curselection()[0]
+    
+    file_path = name_results["files"][index]
+    open_file(file_path)
 
-    broken_dir = file_results_listbox.get(index)
-    open_file(broken_dir, False)
-
-def open_file(broken_dir: str, content: bool = True):
+def open_file(file_path: str):
 
     sublime_path = "C:\Program Files\Sublime Text 3\sublime_text.exe"
 
-    files = content_results if content else name_results["files"]
-    for file_path in files:
+    try: # try to open with sublime text
+        subprocess.Popen([sublime_path, file_path])
+    except FileNotFoundError: # sublime text path couldn't be found
+        subprocess.Popen(["notepad.exe", file_path])
 
-        if file_path.strip().endswith(broken_dir[3:].strip()):
+def open_folder(folder_path: str):
 
-            try: # try to open with sublime text
-                subprocess.Popen([sublime_path, file_path])
-            except FileNotFoundError: # sublime text path couldn't be found
-                subprocess.Popen(["notepad.exe", file_path])
+    os.startfile(folder_path.strip())
 
-            return
-
-def open_folder(broken_dir: str):
-
-    for folder_path in name_results["dirs"]:
-        if folder_path.strip().endswith(broken_dir[3:].strip()):
-            os.startfile(folder_path.strip())
 
 def quit_app():
 
