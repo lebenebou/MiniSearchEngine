@@ -1,6 +1,8 @@
 # MiniSearchEngine
 Mini search engine coded with Python that let's you search for folders, files, and file contents. Made with Tkinter.
 
+![Screenshot](https://raw.githubusercontent.com/lebenebou/MiniSearchEngine/main/Example%20Folder/screenshot.png)
+
 ## engine.py
 ### This file constitutes the backend of the project.
 
